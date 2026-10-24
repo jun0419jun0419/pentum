@@ -291,6 +291,16 @@ class Room {
     await typeJamo(this.inputText, P(text), { step, jitter, prefix, onStep: tall ? () => { field.scrollTop = field.scrollHeight; } : null });
   }
 
+  // 오타를 한 글자씩 천천히 지운다
+  async backspace(n = 1) {
+    const t = Array.from(this.inputText.textContent);
+    for (let k = 0; k < n; k++) {
+      t.pop();
+      this.inputText.textContent = t.join('');
+      await wait(320);
+    }
+  }
+
   async erase() {
     await eraseText(this.inputText, { step: 70 });
     this.inputBar.classList.remove('typing');
@@ -389,23 +399,29 @@ async function lockScene({ narr = '', cards, hint = '알림을 눌러 확인하�
     slot,
     stack,
     hintEl);
+  let resolve;
+  const tapped = new Promise(r => { resolve = r; });
+  const makeCard = c => h(c.static ? 'div' : 'button', {
+    class: `notif${c.static ? ' static' : ''}`,
+    type: c.static ? null : 'button',
+    onclick: c.static ? null : () => resolve(c),
+  },
+  h('div', { class: 'n-head' },
+    h('span', { class: 'n-app' }, icon(c.icon || 'message-circle')),
+    h('b', { text: P(c.title) }),
+    h('span', { class: 'n-when', text: ` · ${c.when || '지금'}` }),
+    c.tag ? h('span', { class: 'n-tag', text: c.tag }) : null),
+  h('div', { class: 'n-text', text: P(c.text) }));
+  // 이미 쌓여 있던 다른 알림들 (회사 단톡방, 택배…)
+  cards.filter(c => c.static).forEach(c => stack.prepend(makeCard(c)));
   await show(v, 1000);
   if (narr) {
     await typeText(narrEl, P(narr), { cps: 15 });
     await wait(readMs(narr));
   }
   await wait(gapBefore);
-  let resolve;
-  const tapped = new Promise(r => { resolve = r; });
-  for (const c of cards) {
-    const card = h('button', { class: 'notif', type: 'button', onclick: () => resolve(c) },
-      h('div', { class: 'n-head' },
-        h('span', { class: 'n-app' }, icon(c.icon || 'message-circle')),
-        h('b', { text: P(c.title) }),
-        h('span', { class: 'n-when', text: ` · ${c.when || '지금'}` }),
-        c.tag ? h('span', { class: 'n-tag', text: c.tag }) : null),
-      h('div', { class: 'n-text', text: P(c.text) }));
-    stack.prepend(card);
+  for (const c of cards.filter(x => !x.static)) {
+    stack.prepend(makeCard(c));
     if (!c.quiet) buzz();
     await wait(c.gap ?? 1100);
   }

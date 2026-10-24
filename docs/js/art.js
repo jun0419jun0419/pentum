@@ -226,20 +226,53 @@ const ART = {
       <path d="M176 132 h18 l-3 14 h-12z" fill="#fff" stroke="#d2d2cc" stroke-width="1.2"/>`, '병원 창밖 단풍');
   },
 
-  // 5월 8일 · 어버이날 메시지 캡처
-  capture() {
+  // 엄마가 캡처해 둔 내 메시지 (기본: 5월 8일 어버이날)
+  capture({ m = 5, d = 8, text = '엄마 어버이날 축하해 주말에 갈게 사랑해', time = '오전 11:31' } = {}) {
+    // 말풍선 안에서 대략 11자마다 띄어쓰기 기준으로 줄을 나눈다
+    const lines = [];
+    for (const word of text.split(' ')) {
+      const lastLine = lines[lines.length - 1];
+      if (lastLine && Array.from(lastLine + ' ' + word).length <= 11) lines[lines.length - 1] = lastLine + ' ' + word;
+      else lines.push(word);
+    }
+    const bh = 22 + lines.length * 17;
+    const tspans = lines.map((l, i) => `<tspan x="66" y="${83 + i * 17}">${esc(l)}</tspan>`).join('');
     return svg(`
       <rect width="240" height="180" fill="#aebfcf"/>
       <rect x="66" y="16" width="108" height="16" rx="8" fill="#000" opacity=".16"/>
-      <text x="120" y="27.5" font-size="8.5" fill="#fff" text-anchor="middle" font-family="sans-serif">2026년 5월 8일 금요일</text>
+      <text x="120" y="27.5" font-size="8.5" fill="#fff" text-anchor="middle" font-family="sans-serif">${esc(dateLong(m, d))}</text>
       <rect x="16" y="50" width="30" height="30" rx="11" fill="#cbbcf2"/>
       <circle cx="31" cy="61" r="5.5" fill="none" stroke="#4a4560" stroke-width="2"/>
       <path d="M22 75 q9 -9 18 0" fill="none" stroke="#4a4560" stroke-width="2"/>
-      <text x="54" y="58" font-size="9" fill="#33414f" font-family="sans-serif">${esc(P('{F}'))}</text>
-      <rect x="54" y="64" width="150" height="46" rx="12" fill="#fff"/>
-      <text font-size="11.5" fill="#1d1d1d" font-family="sans-serif"><tspan x="66" y="83">엄마 어버이날 축하해</tspan><tspan x="66" y="100">주말에 갈게 사랑해</tspan></text>
-      <text x="208" y="108" font-size="7.5" fill="#4e5d6b" font-family="sans-serif">오전 11:31</text>
-      <rect x="2" y="2" width="236" height="176" fill="none" stroke="#fff" stroke-width="4" opacity=".6"/>`, '어버이날 메시지 캡처');
+      <text x="54" y="58" font-size="9" fill="#33414f" font-family="sans-serif">${esc(momContact())}</text>
+      <rect x="54" y="64" width="140" height="${bh}" rx="12" fill="#fff"/>
+      <text font-size="11.5" fill="#1d1d1d" font-family="sans-serif">${tspans}</text>
+      <text x="198" y="${62 + bh}" font-size="7.5" fill="#4e5d6b" font-family="sans-serif">${esc(time)}</text>
+      <rect x="2" y="2" width="236" height="176" fill="none" stroke="#fff" stroke-width="4" opacity=".6"/>`, '캡처한 메시지');
+  },
+
+  // 1월 18일 · 보내지 않은 눈사람 (팔 끝에 엄마의 빨간 고무장갑)
+  snowman() {
+    const r = seeded(21);
+    let flakes = '';
+    for (let i = 0; i < 30; i++) flakes += `<circle cx="${(r() * 240).toFixed(1)}" cy="${(r() * 120).toFixed(1)}" r="${(0.8 + r() * 1.4).toFixed(1)}"/>`;
+    return svg(`
+      <rect width="240" height="180" fill="#cfd8e2"/>
+      <rect x="0" y="70" width="240" height="6" fill="#a08877"/>
+      <g fill="#a08877"><rect x="14" y="58" width="5" height="28"/><rect x="60" y="58" width="5" height="28"/><rect x="176" y="58" width="5" height="28"/><rect x="222" y="58" width="5" height="28"/></g>
+      <path d="M0 96 Q80 84 140 92 T240 90 V180 H0Z" fill="#fbfdff"/>
+      <ellipse cx="122" cy="166" rx="46" ry="7" fill="#dfe6ee"/>
+      <circle cx="120" cy="134" r="34" fill="#fff" stroke="#e1e7ee" stroke-width="2"/>
+      <circle cx="120" cy="88" r="23" fill="#fff" stroke="#e1e7ee" stroke-width="2"/>
+      <path d="M99 104 q21 9 42 0 l-2 7 q-19 7 -38 0z" fill="#c9433a"/>
+      <path d="M133 108 l7 16 l-7 -1z" fill="#c9433a"/>
+      <path d="M121 86 l16 4 l-16 3z" fill="#ef8a2b"/>
+      <circle cx="120" cy="124" r="3" fill="#4a3b33"/><circle cx="120" cy="138" r="3" fill="#4a3b33"/><circle cx="120" cy="152" r="3" fill="#4a3b33"/>
+      <path d="M88 124 L60 106 M70 113 L64 102" stroke="#6b5a4e" stroke-width="3" stroke-linecap="round"/>
+      <path d="M152 124 L178 110" stroke="#6b5a4e" stroke-width="3" stroke-linecap="round"/>
+      <path d="M176 104 q4 -8 9 -3 q3 -6 7 -1 q4 -3 6 2 l-2 13 q-9 5 -17 -1z" fill="#e0413a"/>
+      <path d="M176 104 q-5 1 -3 6" stroke="#e0413a" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <g fill="#fff" opacity=".9">${flakes}</g>`, '눈사람');
   },
 
   // 에필로그 · 내가 만든 장조림

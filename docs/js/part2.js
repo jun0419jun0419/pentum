@@ -10,7 +10,7 @@ const captureShot = () => h('div', { class: 'cap-shot' },
   h('div', { class: 'cap-row' },
     avatar(AV.me),
     h('div', { class: 'cap-col' },
-      h('div', { class: 'cap-name', text: S.F }),
+      h('div', { class: 'cap-name', text: momContact() }),
       h('div', { class: 'cap-line' },
         h('div', { class: 'cap-bubble', text: '엄마 어버이날 축하해 주말에 갈게 사랑해' }),
         h('span', { class: 'cap-time', text: '오전 11:31' })))));
@@ -37,7 +37,7 @@ async function part2() {
     cls: 'mom',
     hint: '알림을 눌러 잠금 해제',
     gapBefore: 2200,
-    cards: unread.map(u => ({ title: S.F, text: u.t, when: u.when, tag: '읽지 않음', gap: 520, quiet: true })),
+    cards: unread.map(u => ({ title: momContact(), text: u.t, when: u.when, tag: '읽지 않음', gap: 520, quiet: true })),
   });
   await momPin();
   await momHome();
@@ -86,7 +86,9 @@ async function momHome() {
   setNote();
   const tiles = APPS.map(a => {
     const b = h('button', { class: 'app-tile', type: 'button', dataset: { app: a.id } },
-      h('span', { class: 'app-ic', style: `--ac:${a.color}` }, icon(a.icon), h('span', { class: 'app-seen' }, icon('check'))),
+      h('span', { class: 'app-ic', style: `--ac:${a.color}` }, icon(a.icon),
+        a.id === 'msg' ? h('span', { class: 'app-badge', text: S.night.length + S.last.length }) : null,
+        h('span', { class: 'app-seen' }, icon('check'))),
       h('span', { class: 'app-name', text: a.name }));
     return [b, a];
   });
@@ -137,7 +139,8 @@ function appShell(title, { back = true, cls = '' } = {}) {
     : h('span', { class: 'ap-back' });
   const body = h('div', { class: 'ap-body' });
   const titleEl = h('h2', { text: title });
-  const el = h('section', { class: `view app ${cls}`.trim(), dataset: { tone: 'app', temp: '1' } },
+  // 엄마 휴대폰은 글씨가 크게 설정되어 있다
+  const el = h('section', { class: `view app big ${cls}`.trim(), dataset: { tone: 'app', temp: '1' } },
     h('header', { class: 'ap-head' }, backBtn, titleEl), body);
   return { el, body, back: backBtn, titleEl };
 }
@@ -191,6 +194,12 @@ function buildMomRooms() {
     ['caption', '경희님.'],
     ['caption', '엄마 이름이 경희라는 걸, 처음 알게 된 것 같았다.'],
   ];
+  // 앞에 놓인 조건부 대화: 1부에서 고른 답에 따라 생긴다
+  const before = [];
+  if (S.picks.s2 === 0) before.push(['date', 12, 3], ['me', '^^', '오후 7:40'], ['imo', '언니 이모티콘 할줄아네ㅋㅋ', '오후 7:41'], ['me', '{F} 알려줬다', '오후 7:44']);
+  if (S.picks.s12 === 2) before.push(['date', 6, 26], ['me', 'ㅊㅋㅊㅋ가 뭐냐', '오후 12:52'], ['imo', '축하축하 줄인거ㅋㅋ', '오후 12:53'], ['me', '아 그렇구나', '오후 12:58']);
+  imo.script = [...before, ...imo.script];
+  [imo, dad, song].forEach(r => r.el.classList.add('big'));
   return { imo, dad, song };
 }
 
@@ -212,7 +221,7 @@ async function appMessages() {
   const sh = appShell('메시지');
   const lastUnread = S.last[S.last.length - 1] || S.night[S.night.length - 1] || '';
   const rows = [
-    { key: 'F', name: S.F, av: AV.me, preview: lastUnread, when: '11월 5일', badge: S.night.length + S.last.length },
+    { key: 'F', name: momContact(), pin: true, av: AV.me, preview: lastUnread, when: '11월 5일', badge: S.night.length + S.last.length },
     { key: 'imo', name: '이모', av: AV.imo, preview: '얼굴보니까 못하겠더라', when: '9월 28일' },
     { key: 'song', name: '화요일 노래교실', av: AV.group, preview: '감사합니다 곧 갈께요', when: '10월 20일', count: 12 },
     { key: 'dad', name: '남편', av: AV.dad, preview: '추석때 내가 할께', when: '8월 21일' },
@@ -221,7 +230,7 @@ async function appMessages() {
     const b = h('button', { class: 'ml-row', type: 'button' },
       avatar(r.av),
       h('span', { class: 'ml-mid' },
-        h('span', { class: 'ml-name' }, h('b', { text: r.name }), r.count ? h('span', { class: 'ml-count', text: ` ${r.count}` }) : null),
+        h('span', { class: 'ml-name' }, h('b', { text: r.name }), r.pin ? icon('pinned', 'ml-pin') : null, r.count ? h('span', { class: 'ml-count', text: ` ${r.count}` }) : null),
         h('span', { class: 'ml-prev', text: r.preview })),
       h('span', { class: 'ml-side' }, h('span', { class: 'ml-when', text: r.when }), r.badge ? h('span', { class: 'ml-badge', text: r.badge }) : null));
     sh.body.append(b);
@@ -252,14 +261,16 @@ async function appPhotos() {
     { art: 'soup', cap: '생일 미역국 아빠가 끓였는데 짜다', m: 6, d: 26 },
     { art: 'carousel', cap: '일곱살 {F} 회전목마 열번 탔다', m: 9, d: 10 },
     { art: 'recipe', cap: '장조림 세번 다시 썼다', m: 10, d: 15 },
+    { art: 'snowman', cap: S.picks.s5 === 2 ? '눈사람 만들었다 {F} 보여줄라다 말았다' : '눈사람 만들었다 코가 삐뚤다', m: 1, d: 18 },
+    S.picks.s1 === 2 ? { art: 'capture', cap: '감기조심하래', m: 12, d: 3, opts: { m: 12, d: 3, text: '응 엄마도 감기 조심해', time: '오후 7:12' } } : null,
     S.wallpaperLove
       ? { art: 'capture', cap: '사랑한대 배경화면 했다', m: 5, d: 8 }
       : { art: 'maple', cap: '내년에도 볼수있을까', m: 10, d: 20 },
-  ].sort((a, b) => stamp(b.m, b.d, 0, 0) - stamp(a.m, a.d, 0, 0));
+  ].filter(Boolean).sort((a, b) => stamp(b.m, b.d, 0, 0) - stamp(a.m, a.d, 0, 0));
   const sh = appShell('사진');
   const grid = h('div', { class: 'ph-grid' });
   const pairs = items.map(it => {
-    const b = h('button', { class: 'ph-thumb', type: 'button', 'aria-label': `${it.m}월 ${it.d}일 사진`, html: ART[it.art]() });
+    const b = h('button', { class: 'ph-thumb', type: 'button', 'aria-label': `${it.m}월 ${it.d}일 사진`, html: ART[it.art](it.opts) });
     grid.append(b);
     return [b, it];
   });
@@ -270,7 +281,7 @@ async function appPhotos() {
     if (!it) return;
     const vw = appShell(`${it.m}월 ${it.d}일`, { cls: 'viewer' });
     vw.body.append(
-      h('div', { class: 'pv-img', html: ART[it.art]() }),
+      h('div', { class: 'pv-img', html: ART[it.art](it.opts) }),
       h('div', { class: 'pv-desc' }, h('span', { class: 'pv-lbl', text: '설명' }), h('p', { text: P(it.cap) })));
     await show(vw.el, 600);
     await onceClick(vw.back);
@@ -283,7 +294,7 @@ async function appCalls() {
   const c0830 = S.calls.c0830 || { answered: false };
   const c1003 = S.calls.c1003 || { answered: false };
   const c0821 = S.calls.c0821;
-  const F = S.F;
+  const F = momContact();
   const list = [
     { who: F, ic: 'phone-x', when: '10월 31일 오후 11:38', note: '발신 취소', red: true },
     { who: F, ic: 'phone-x', when: '10월 31일 오후 11:36', note: '발신 취소', red: true },
