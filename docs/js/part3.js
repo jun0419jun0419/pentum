@@ -47,7 +47,7 @@ async function memoCard(room, { label, lines, flash = false }) {
     await typeJamo(p, P(l), { step: 85, jitter: 60 });
     await wait(260);
   }
-  await waitOrTap(2200);
+  await wait(2200);
   saved.classList.add('on');
   await wait(1100);
   card.classList.remove('in');
@@ -205,7 +205,7 @@ async function changeProfile(room) {
   av.classList.remove('swap');
   await wait(1000);
   await typeJamo(status, P('{F} 화이팅'), { step: 120 });
-  await waitOrTap(1800);
+  await wait(1800);
   card.classList.remove('in');
   await wait(700);
   card.remove();

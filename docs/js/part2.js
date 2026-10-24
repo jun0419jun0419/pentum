@@ -56,7 +56,7 @@ async function momPin() {
       h('div', { class: 'pin-pad' }, keys)));
   await show(v, 900);
   await typeText(narr, '비밀번호는 내 생일이었다.', { cps: 13 });
-  await waitOrTap(1600);
+  await wait(1600);
   for (const d of dots) {
     d.classList.add('on');
     await wait(520);

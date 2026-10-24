@@ -1,7 +1,7 @@
 'use strict';
 
 /* ================================================================
-   공통 유틸: 시간, 탭으로 넘기기, 요소 만들기, 한글 처리, 게임 상태
+   공통 유틸: 시간, 요소 만들기, 한글 처리, 게임 상태
    ================================================================ */
 
 // ?speed=0.05 처럼 주면 모든 대기 시간이 그 배율로 줄어든다(점검용).
@@ -20,32 +20,6 @@ const shuffle = arr => {
 };
 // 글을 읽는 데 필요한 시간(ms)
 const readMs = text => clamp(900 + Array.from(String(text)).length * 70, 1500, 5600);
-
-/* ---------- 탭으로 빨리 넘기기 ----------
-   버튼이 아닌 곳을 탭하면 'tap' 이벤트가 퍼지고,
-   진행 중인 타이핑은 끝까지 채워지고 대기는 바로 끝난다. */
-const tapBus = new EventTarget();
-const emitTap = () => tapBus.dispatchEvent(new Event('tap'));
-
-function waitOrTap(ms) {
-  return new Promise(res => {
-    const done = () => {
-      clearTimeout(timer);
-      tapBus.removeEventListener('tap', done);
-      res();
-    };
-    const timer = setTimeout(done, ms * SPEED);
-    tapBus.addEventListener('tap', done);
-  });
-}
-
-function watchSkip() {
-  const w = { skipped: false };
-  const on = () => { w.skipped = true; };
-  tapBus.addEventListener('tap', on);
-  w.stop = () => tapBus.removeEventListener('tap', on);
-  return w;
-}
 
 /* ---------- 요소 만들기 ---------- */
 function h(tag, props, ...kids) {
@@ -106,27 +80,21 @@ function jamoSteps(ch) {
 
 /* ---------- 타이핑 효과 ---------- */
 async function typeText(el, text, { cps = 12, jitter = 0.35 } = {}) {
-  const w = watchSkip();
   let out = '';
   for (const c of Array.from(text)) {
-    if (w.skipped) break;
     out += c;
     el.textContent = out;
     const pause = /[,.…?!]/.test(c) ? 4 : c === '\n' ? 5 : 1;
     await wait((1000 / cps) * (1 - jitter + Math.random() * jitter * 2) * pause);
   }
   el.textContent = text;
-  w.stop();
 }
 
 // 엄마의 느린 손가락: 자모 단위로 천천히
 async function typeJamo(el, text, { step = 100, jitter = 70, prefix = '' } = {}) {
-  const w = watchSkip();
   let done = prefix;
   for (const ch of Array.from(text)) {
-    if (w.skipped) break;
     for (const s of jamoSteps(ch)) {
-      if (w.skipped) break;
       el.textContent = done + s;
       await wait(step + Math.random() * jitter);
     }
@@ -134,7 +102,6 @@ async function typeJamo(el, text, { step = 100, jitter = 70, prefix = '' } = {})
     if (ch === ' ' || ch === '\n') await wait(step * 1.6);
   }
   el.textContent = prefix + text;
-  w.stop();
 }
 
 async function eraseText(el, { step = 65 } = {}) {
