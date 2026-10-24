@@ -286,7 +286,6 @@ function record(id, i, o, sc) {
 }
 
 async function playScene(sc) {
-  sc.before?.();
   setClock(sc.m, sc.d, sc.t);
   const room = R[sc.room || 'mom'];
   const who = sc.from || 'mom';
@@ -295,14 +294,17 @@ async function playScene(sc) {
 
   if (sc.ls) {
     const pre = sc.pre ?? 1;
-    room.date(sc.m, sc.d);
-    sc.mom.slice(0, pre).forEach(it => add(room.peerNow(who, it)));
     const cards = [...(sc.lsBefore || []), { title: room.peers[who].name, text: sc.preview || previewOf(sc.mom[pre - 1]) }];
     await lockScene({ narr: sc.cap, cards });
+    // 대화방이 잠금화면 뒤로 완전히 가려진 뒤에 바꿔야 전환 중에 미리 보이지 않는다
+    sc.before?.();
+    room.date(sc.m, sc.d);
+    sc.mom.slice(0, pre).forEach(it => add(room.peerNow(who, it)));
     await show(room.el, 800);
     await wait(700);
     for (const it of sc.mom.slice(pre)) add(await room.peerType(who, it));
   } else {
+    sc.before?.();
     if (curView !== room.el) await show(room.el, 1000);
     room.date(sc.m, sc.d);
     if (sc.sys) room.system(sc.sys, 'package');
@@ -556,8 +558,8 @@ async function climax() {
 async function part1() {
   for (const step of SCENES) {
     if (step.card) {
-      step.before?.();
       await titleCard(step.card);
+      step.before?.();
       continue;
     }
     if (step.run) {
