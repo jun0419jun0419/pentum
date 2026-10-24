@@ -185,26 +185,26 @@ async function recordVoice(room) {
   m.bubble.classList.add('done');
 }
 
-// 9월 10일: 프로필 사진 바꾸기
-async function changeProfile(room) {
-  await room.button('프로필 사진 바꾸기', 'camera');
-  const av = avatar(AV.mom);
-  const status = h('div', { class: 'pf-status' });
+// 9월 10일: 프로필 사진 바꾸기 (창피하다는 말을 들었으면 나중에 되돌린다)
+async function changeProfile(room, { label = '프로필 사진 바꾸기', from = AV.mom, to = AV.momKid, status = '{F} 화이팅' } = {}) {
+  await room.button(label, 'camera');
+  const av = avatar(from);
+  const statusEl = h('div', { class: 'pf-status', text: from === AV.mom ? '' : P(status) });
   const card = h('div', { class: 'profile-card' },
     h('div', { class: 'pf-av' }, av),
     h('div', { class: 'pf-name', text: '엄마' }),
-    status);
+    statusEl);
   room.overlay.append(card);
   void card.offsetWidth;
   card.classList.add('in');
   await wait(1600);
   av.classList.add('swap');
   await wait(500);
-  av.style.setProperty('--avc', AV.momKid.color);
-  av.replaceChildren(icon(AV.momKid.icon));
+  av.style.setProperty('--avc', to.color);
+  av.replaceChildren(icon(to.icon));
   av.classList.remove('swap');
   await wait(1000);
-  await typeJamo(status, P('{F} 화이팅'), { step: 120 });
+  if (!statusEl.textContent) await typeJamo(statusEl, P(status), { step: 120 });
   await wait(1800);
   card.classList.remove('in');
   await wait(700);
@@ -215,7 +215,7 @@ async function changeProfile(room) {
 const LETTER = [
   ['{C} 엄마가 할말이 있는데', '글씨가 느려서 자꾸 지웠다'],
   ['니가 보낸 문자에 1 금방 없어졌지', '엄마가 폰을 손에 쥐고 살아서 그래'],
-  ['밥먹어 옷입어 도착햇니', '엄마는 그것밖에 못보냈는데', '그거 다 사랑한다는 말이다'],
+  ['밥먹었니 옷입어 도착햇니', '엄마는 그것밖에 못보냈는데', '그거 다 사랑한다는 말이다'],
   ['장조림은 공책에 적어놨다', '메추리알 꼭 넣어라'],
   ['나중에 엄마한테 보낸 문자에', '1이 안 없어져도', '엄마가 안 읽은거 아니다', '엄마는 다 안다'],
   ['{F} 사랑해', '이 말은 다 쓰고 간다'],
@@ -310,7 +310,7 @@ async function part3() {
   setClock(3, 14, '22:03');
   room.date(3, 14);
   await room.caption('밤 10시가 넘었다. 오늘은 연락이 없었다.');
-  await momSays(room, '밥먹어', { draft: '밥은 먹고 일하니 엄마가 반찬 보내줄까 김치는 있니' });
+  await momSays(room, '밥먹었니', { draft: '밥은 먹고 일하니 엄마가 반찬 보내줄까 김치는 있니' });
   await kidEcho(room, 's6', { readDelay: 2200 });
   await replay(room, 's7');
   await replay(room, 's8');
@@ -405,6 +405,10 @@ async function part3() {
   await momSays(room, '엄마 프사 바꿧다');
   await momSays(room, '니 어릴때 사진이다');
   await kidEcho(room, 's18', { readDelay: 3000 });
+  if (S.picks.s18 === 2) {
+    await wait(1200);
+    await changeProfile(room, { label: '프로필 사진 되돌리기', from: AV.momKid, to: AV.mom });
+  }
 
   // 9월 27일
   setClock(9, 27, '18:24');
@@ -473,10 +477,10 @@ async function part3() {
   setClock(10, 29, '12:30');
   room.date(10, 29);
   await room.caption('약 때문인지 자꾸 깜빡한다.');
-  await momSays(room, '밥먹어');
+  await momSays(room, '밥먹었니');
   await wait(2400);
   await room.caption('보냈던가?');
-  await momSays(room, '밥먹어');
+  await momSays(room, '밥먹었니');
   await kidEcho(room, 's24', { readDelay: 2600, momLag: 7000 });
   await memoCard(room, { label: labelAt(10, 29, 13, 5), lines: FORGET_MEMO });
 

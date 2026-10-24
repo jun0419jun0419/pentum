@@ -13,21 +13,30 @@ const COOK_STEPS = [
   { t: '약불에 천천히 졸이기', memo: '급하게 하지 마라 천천히' },
 ];
 
+// 엄마가 지우개로 지우고 다시 쓴 자리
+const ERASED = { '물 세컵 간장 반컵': '물 네컵 간장 한컵', '설탕 두숟갈 마늘 한줌': '설탕 한숟갈' };
+
 async function cooking() {
   const done = h('ol', { class: 'ck-done' });
   const hint = h('p', { class: 'ck-hint', 'aria-live': 'polite', text: '순서대로 눌러 보세요.' });
   const order = shuffle(COOK_STEPS.map((s, i) => i));
   const btns = order.map(i => [h('button', { class: 'ck-step', type: 'button', text: COOK_STEPS[i].t }), i]);
   const outro = h('p', { class: 'ck-outro' });
+  const lastNote = h('p', { class: 'ck-last-note' });
+  const lastInk = h('span', { class: 'ck-last-ink' });
+  const last = h('div', { class: 'ck-last' }, lastNote,
+    h('div', { class: 'ck-last-line' }, h('span', { class: 'ck-last-ghost', 'aria-hidden': 'true', text: '다음에 오면 엄마가 해줄께' }), lastInk));
   const v = h('section', { class: 'view cook', dataset: { tone: 'light', temp: '1' } },
     h('div', { class: 'ck-page' },
       h('div', { class: 'ck-top' },
         h('h2', { text: '장조림' }),
         h('p', { class: 'ck-sub', text: '엄마의 공책' })),
-      h('ul', { class: 'ck-ingr' }, RECIPE_MEMO.slice(1).map(l => h('li', { text: P(l) }))),
+      h('ul', { class: 'ck-ingr' }, RECIPE_MEMO.slice(1).map(l => h('li', { class: ERASED[l] ? 'erased' : null },
+        ERASED[l] ? h('span', { class: 'ck-ghost', 'aria-hidden': 'true', text: ERASED[l] }) : null,
+        h('span', { text: P(l) })))),
       done, hint,
       h('div', { class: 'ck-btns' }, btns.map(b => b[0])),
-      outro));
+      outro, last));
   await show(v, 1200);
 
   let next = 0;
@@ -57,7 +66,37 @@ async function cooking() {
   await wait(1400);
   await typeText(outro, '엄마 맛이 났다. 조금 짰다.', { cps: 10 });
   outro.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  await wait(3200);
+  await wait(3000);
+
+  // 공책 맨 아래: 지우개 자국 위에 다시 쓴 한 줄
+  await typeText(lastNote, '공책을 덮으려다, 맨 아래 줄에 지우개 자국을 봤다.', { cps: 11 });
+  last.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  await wait(1400);
+  last.classList.add('show');
+  await wait(3600);
+  await typeJamo(lastInk, '이제 니가 해먹어라', { step: 150, jitter: 90 });
+  last.scrollIntoView({ behavior: 'smooth', block: 'end' });
+  await wait(4200);
+}
+
+// 이번엔 내가 길게 쓴다. 지우기 버튼은 없다
+function longReply() {
+  return [
+    '엄마',
+    '공책 보고 장조림 했어',
+    '메추리알 진짜 많이 넣었어',
+    '조금 짰는데 엄마 맛 났어',
+    '',
+    '엄마가 보낸 밥먹었니 옷입어 도착햇니',
+    '그게 다 무슨 말이었는지 이제 알아',
+    '',
+    S.kindness >= 10 ? '더 길게 답장할걸 그랬어' : 'ㅇㅇ만 보내서 미안해',
+    '',
+    '이제 내가 길게 쓸게',
+    '1이 안 없어져도 계속 쓸게',
+    '',
+    '엄마 사랑해',
+  ].join('\n');
 }
 
 async function epilogue() {
@@ -69,6 +108,8 @@ async function epilogue() {
   await wait(2400);
   setClock(11, 29, '18:40');
   room.date(11, 29);
+  await room.caption('냉동실에 엄마가 싸 준 장조림이 한 통 남아 있었다.');
+  await room.caption('아까워서 아직 뚜껑을 못 열었다.');
   await room.caption('엄마의 공책을 펼쳤다.');
   await cooking();
 
@@ -81,12 +122,21 @@ async function epilogue() {
   room.msg({ from: 'me', kind: 'photo', art: 'jang', unread: true });
   await wait(700);
   await room.send(opts[i]);
-  await wait(6000);
+  await wait(3600);
+  await room.caption('보내 놓고 보니 너무 짧았다.');
+  await room.caption('이번엔 길게 쓰기로 했다.');
+  setClock(11, 29, '20:07');
+  await room.compose(longReply(), { step: 62, jitter: 40, tall: true });
+  await room.button('보내기', 'send');
+  room.sendComposed();
+  await wait(7000);
   room.el.classList.add('slowread');
   const n = room.markRead({ slow: true });
   await wait(2400 + n * 900);
   await room.caption('1이 사라졌다.');
-  await wait(3200);
+  await wait(2200);
+  await room.caption('엄마는 다 안다고 했다.');
+  await wait(3600);
   await ending();
 }
 
@@ -106,6 +156,22 @@ async function ending() {
     }
     await wait(gap + 1400);
   };
+  // 내가 고른 답장마다 남아 있던 엄마의 메모가 하나씩 지나간다
+  const memoEl = h('p', { class: 'end-memo' });
+  box.append(memoEl);
+  for (const m of [...S.memos].sort((a, b) => a.at - b.at).slice(0, 10)) {
+    memoEl.textContent = m.lines.map(P).join(' ');
+    memoEl.classList.add('on');
+    await wait(2400);
+    memoEl.classList.remove('on');
+    await wait(900);
+  }
+  memoEl.textContent = '밥먹었니 옷입어 도착햇니 / 그거 다 사랑한다는 말이다';
+  memoEl.classList.add('on');
+  await wait(4200);
+  memoEl.classList.remove('on');
+  await wait(1200);
+  memoEl.remove();
   await say(['어떤 답장을 골랐어도', '엄마의 메모는 결국 같은 말이었어요.'], 1800);
   await say(['진짜 엔딩은 게임 밖에 있어요.'], 900);
   await say(['오늘, 1이 금방 사라질 사람에게', '조금 길게 답장해 보세요.'], 600);

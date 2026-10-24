@@ -181,9 +181,20 @@ const ART = {
           <text x="48" y="44" font-size="17" font-weight="600">장조림</text>
           <g font-size="11.5">${texts}</g>
         </g>
-        <path d="M150 40 q4 -4 8 0 t8 0 t8 0 t8 0" stroke="#2d3f6b" stroke-width="1.3" fill="none"/>
-        <path d="M150 36 l32 8" stroke="#2d3f6b" stroke-width="1.1"/>
-        <path d="M138 128 q3 -3 6 0 t6 0 t6 0" stroke="#2d3f6b" stroke-width="1.1" fill="none" opacity=".7"/>
+        <g fill="#b9b2a6" opacity=".22">
+          <rect x="44" y="85" width="112" height="15" rx="7"/>
+          <rect x="44" y="103" width="76" height="15" rx="7"/>
+        </g>
+        <g font-family="'Noto Serif KR', serif" font-size="11.5" fill="#2d3f6b" opacity=".14">
+          <text x="51" y="98">물 네컵 간장 한컵</text>
+          <text x="50" y="116">설탕 한숟갈</text>
+        </g>
+        <g fill="#9e978b" opacity=".55">
+          <rect x="160" y="146" width="5" height="2.4" rx="1.2" transform="rotate(20 160 146)"/>
+          <rect x="170" y="152" width="4" height="2" rx="1" transform="rotate(-30 170 152)"/>
+          <rect x="154" y="156" width="3.5" height="2" rx="1"/>
+          <rect x="176" y="143" width="3" height="1.8" rx=".9"/>
+        </g>
       </g>
       <rect x="184" y="130" width="64" height="7" rx="3.5" fill="#3b5ba0" transform="rotate(-38 184 130)"/>`, '장조림 만드는 법 공책');
   },
@@ -258,6 +269,13 @@ const ART = {
       ${beef}${eggs}${garlic}
       <circle cx="104" cy="76" r="7" fill="#fff" opacity=".12"/>
       <rect x="182" y="120" width="70" height="4" rx="2" fill="#7a4a2a" transform="rotate(-24 182 120)"/>
-      <rect x="186" y="130" width="70" height="4" rx="2" fill="#7a4a2a" transform="rotate(-21 186 130)"/>`, '장조림');
+      <rect x="186" y="130" width="70" height="4" rx="2" fill="#7a4a2a" transform="rotate(-21 186 130)"/>
+      <g transform="rotate(-8 40 150)">
+        <rect x="6" y="122" width="70" height="52" rx="9" fill="#000" opacity=".12" transform="translate(2 3)"/>
+        <rect x="6" y="122" width="70" height="52" rx="9" fill="#e9eef2"/>
+        <rect x="12" y="128" width="58" height="40" rx="6" fill="#6b3a1f" opacity=".85"/>
+        <rect x="14" y="140" width="54" height="13" rx="1.5" fill="#f2e3b8"/>
+        <text x="41" y="150" font-size="8.5" text-anchor="middle" fill="#3b3326" font-family="'Noto Serif KR', serif">장조림 9.27</text>
+      </g>`, '장조림 두 통');
   },
 };
