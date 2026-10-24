@@ -7,14 +7,25 @@
    ================================================================ */
 
 // 엄마의 작성창: (긴 진심 → 지우기) → 짧은 말 → 보내기
-async function momSays(room, text, { draft = null, tap = true, step = 125, read = null } = {}) {
+async function momSays(room, text, { draft = null, slip = null, tap = true, step = 125, read = null } = {}) {
   if (draft) {
     await room.compose(draft, { step: 105 });
     await room.button('지우기', 'backspace');
     await room.erase();
     await wait(1000);
   }
-  await room.compose(text, { step });
+  if (slip) {
+    // 오타를 냈다가 지우고 다시 친다: slip = [잘못 친 글자까지, 지울 글자 수]
+    const [typed, back] = slip;
+    await room.compose(typed, { step });
+    await wait(800);
+    await room.backspace(back);
+    await wait(500);
+    const kept = Array.from(P(typed)).length - back;
+    await room.compose(Array.from(P(text)).slice(kept).join(''), { step, append: true });
+  } else {
+    await room.compose(text, { step });
+  }
   if (tap) await room.button('보내기', 'send');
   else await wait(550);
   const m = room.sendComposed();
@@ -100,7 +111,7 @@ async function replay(room, id) {
 
 // 3부의 통화: 저장해 둔 통화를 엄마 쪽에서 다시 듣는다
 async function replayCall(room, rec, { video = false, incoming = false } = {}) {
-  const call = new Call({ name: S.F, av: AV.me, sub: video ? '영상통화' : '휴대전화', video, remote: 'person', self: 'covered' });
+  const call = new Call({ name: momContact(), av: AV.me, sub: video ? '영상통화' : '휴대전화', video, remote: 'person', self: 'covered' });
   await show(call.el, 900);
   if (incoming) {
     await call.ring({ acceptOnly: true });
@@ -125,7 +136,7 @@ async function replayCall(room, rec, { video = false, incoming = false } = {}) {
 // 걸었다가 엄마가 스스로 끊는 전화
 async function dialAndCancel(room, note) {
   await room.button('전화 걸기', 'phone');
-  const call = new Call({ name: S.F, av: AV.me, sub: '휴대전화' });
+  const call = new Call({ name: momContact(), av: AV.me, sub: '휴대전화' });
   await show(call.el, 800);
   call.dial({ endable: true });
   await wait(1600);
@@ -137,7 +148,7 @@ async function dialAndCancel(room, note) {
 
 async function dialNoAnswer(room) {
   await room.button('전화 걸기', 'phone');
-  const call = new Call({ name: S.F, av: AV.me, sub: '휴대전화' });
+  const call = new Call({ name: momContact(), av: AV.me, sub: '휴대전화' });
   await show(call.el, 800);
   call.dial();
   await wait(4200);
@@ -263,7 +274,7 @@ async function letterScene() {
 function showBanner(parent, t) {
   const b = h('div', { class: 'banner' },
     avatar(AV.me),
-    h('div', { class: 'bn-mid' }, h('b', { text: S.F }), h('span', { text: t })),
+    h('div', { class: 'bn-mid' }, h('b', { text: momContact() }), h('span', { text: t })),
     h('span', { class: 'bn-when', text: '지금' }));
   parent.append(b);
   setTimeout(() => b.classList.add('in'), 50);
@@ -275,7 +286,7 @@ function showBanner(parent, t) {
 async function part3() {
   await titleCard({ label: '3부', title: '엄마의 1년', quote: '엄마는 휴대폰을 손에 쥐고 살았다' });
   setBattery(null);
-  const room = new Room({ title: S.F, peers: { kid: { name: S.F, av: AV.me } } });
+  const room = new Room({ title: momContact(), peers: { kid: { name: momContact(), av: AV.me } } });
   R.f = room;
 
   // 12월 3일
@@ -293,7 +304,7 @@ async function part3() {
   room.date(12, 31);
   await room.caption('올해는 이모보다 먼저 보내야 한다.');
   setClock(12, 31, '23:58');
-  await momSays(room, '새해복많이받아', { step: 125 });
+  await momSays(room, '새해복많이받아', { slip: ['새해봉', 1] });
   await kidEcho(room, 's3', { readDelay: 1500 });
 
   // 1월 5일
@@ -403,7 +414,7 @@ async function part3() {
   await changeProfile(room);
   setClock(9, 10, '18:02');
   await momSays(room, '엄마 프사 바꿧다');
-  await momSays(room, '니 어릴때 사진이다');
+  await momSays(room, '니 어릴때 사진이다', { slip: ['니 어릴떄', 1] });
   await kidEcho(room, 's18', { readDelay: 3000 });
   if (S.picks.s18 === 2) {
     await wait(1200);

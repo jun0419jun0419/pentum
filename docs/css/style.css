@@ -484,6 +484,7 @@ button.rh-back:active { background: rgba(0, 0, 0, 0.08); }
 .n-when { opacity: 0.6; flex: 1; }
 .n-tag { font-size: 10.5px; padding: 1px 7px; border-radius: 999px; background: rgba(239, 138, 23, 0.18); color: #c46a00; font-weight: 700; }
 @media (prefers-color-scheme: dark) { .n-tag { color: #ffb356; } }
+.notif.static { cursor: default; animation: none; opacity: 0.9; }
 .n-text { margin-top: 4px; font-size: 14.5px; line-height: 1.4; word-break: keep-all; }
 .ls-hint { text-align: center; font-size: 12.5px; opacity: 0; transition: opacity 1s; padding-top: 6px; }
 .ls-hint.on { opacity: 0.85; animation: breathe 2.4s ease-in-out infinite; }
@@ -651,8 +652,9 @@ button.rh-back:active { background: rgba(0, 0, 0, 0.08); }
 .app-tile:active { background: rgba(255, 255, 255, 0.1); }
 .app-ic { position: relative; width: 66px; height: 66px; border-radius: 20px; background: var(--ac); display: grid; place-items: center; font-size: 32px; box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25); }
 .app-name { font-size: 13.5px; font-weight: 600; text-shadow: 0 1px 6px rgba(0, 0, 0, 0.5); }
-.app-seen { position: absolute; top: -6px; right: -6px; width: 22px; height: 22px; border-radius: 50%; background: #34c26b; color: #fff; font-size: 14px; display: grid; place-items: center; transform: scale(0); transition: transform 0.4s cubic-bezier(0.3, 1.5, 0.5, 1); border: 2px solid rgba(255, 255, 255, 0.9); }
+.app-seen { position: absolute; bottom: -6px; right: -6px; width: 22px; height: 22px; border-radius: 50%; background: #34c26b; color: #fff; font-size: 14px; display: grid; place-items: center; transform: scale(0); transition: transform 0.4s cubic-bezier(0.3, 1.5, 0.5, 1); border: 2px solid rgba(255, 255, 255, 0.9); }
 .app-tile.seen .app-seen { transform: scale(1); }
+.app-badge { position: absolute; top: -7px; right: -7px; min-width: 22px; height: 22px; padding: 0 6px; border-radius: 999px; background: #f2553f; color: #fff; font-size: 12px; font-weight: 700; display: grid; place-items: center; border: 2px solid rgba(255, 255, 255, 0.9); }
 .app-tile.ready .app-ic { animation: ready 1.8s ease-in-out infinite; }
 @keyframes ready { 50% { box-shadow: 0 0 0 8px rgba(255, 255, 255, 0.22); } }
 
@@ -679,6 +681,9 @@ button.ap-back:active { background: var(--app-soft); }
 .ml-mid { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
 .ml-name { font-size: 15px; }
 .ml-count { color: var(--app-sub); font-size: 13px; }
+.ml-pin { font-size: 13px; color: var(--app-sub); margin-left: 4px; vertical-align: -1px; }
+/* 엄마 휴대폰은 글씨 크기를 키워 두었다 */
+.app.big .ap-body, .room.big .rb { zoom: 1.12; }
 .ml-prev { font-size: 13px; color: var(--app-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .ml-side { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; }
 .ml-when { font-size: 11.5px; color: var(--app-sub); }

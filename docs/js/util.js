@@ -138,6 +138,8 @@ function setCaller(kind, name) {
   }
 }
 const P = s => String(s).replaceAll('{C}', S.C).replaceAll('{F}', S.F);
+// 엄마 휴대폰에 저장된 내 이름
+const momContact = () => `${S.F}♡`;
 
 /* ---------- 이야기 속 시계 (2025년 12월 ~ 2026년 11월) ---------- */
 const WEEK = ['일', '월', '화', '수', '목', '금', '토'];

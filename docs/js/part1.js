@@ -40,6 +40,7 @@ const SCENES = [
   },
   {
     id: 's3', m: 12, d: 31, t: '23:58', ls: true, read: 600,
+    lsBefore: [{ title: '고등학교 친구들', text: '메시지 48개', icon: 'users', when: '오후 11:57', static: true }],
     cap: '친구들이랑 카운트다운을 기다리는 중.',
     mom: ['새해복많이받아'],
     opts: [
@@ -73,6 +74,7 @@ const SCENES = [
   { card: { label: '1부 · 2장', title: '봄', quote: '밥먹었니' } },
   {
     id: 's6', m: 3, d: 14, t: '22:03', ls: true, read: 1500,
+    lsBefore: [{ title: '팀 단톡방', text: '수정본은 내일 오전까지 부탁드려요', icon: 'users', when: '오후 9:51', static: true }],
     cap: '밤 10시. 사무실엔 나 혼자 남았다.',
     mom: ['밥먹었니'],
     opts: [
@@ -114,6 +116,7 @@ const SCENES = [
   },
   {
     id: 's10', m: 5, d: 20, t: '07:10', ls: true, read: 1500,
+    lsBefore: [{ title: '택배', text: '오늘 도착 예정입니다', icon: 'truck-delivery', when: '오전 7:01', static: true }],
     cap: '출근 준비로 정신없는 아침.',
     mom: ['엄마 건강검진 받으러간다', '별거아니다 나이들면 다하는거'],
     opts: [
@@ -136,6 +139,7 @@ const SCENES = [
   { card: { label: '1부 · 3장', title: '여름', quote: '별일아니다' }, before: () => R.mom.setSub('건강이 최고') },
   {
     id: 's12', m: 6, d: 26, t: '12:40', ls: true, read: 3000, pre: 1,
+    lsBefore: [{ title: '점심 단톡방', text: '메시지 12개', icon: 'users', when: '오후 12:31', static: true }],
     cap: '점심을 먹다가 폰을 봤다.',
     mom: ['오늘 엄마 생일이다', { photo: 'soup' }, '아빠가 미역국 끓여줫다^^'],
     opts: [
@@ -236,6 +240,7 @@ const SCENES = [
   { run: momVideo1003 },
   {
     id: 's22', m: 10, d: 15, t: '16:20', ls: true, read: 6000, pre: 1,
+    lsBefore: [{ title: '캘린더', text: '주간 회의 · 5분 후', icon: 'calendar', when: '오후 4:15', static: true }],
     cap: '회의 들어가기 5분 전.',
     mom: [{ photo: 'recipe' }, '장조림 만드는법 적엇다', '나중에 해먹어라'],
     opts: [
