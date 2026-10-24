@@ -57,7 +57,7 @@ async function cooking() {
   await wait(1400);
   await typeText(outro, '엄마 맛이 났다. 조금 짰다.', { cps: 10 });
   outro.scrollIntoView({ behavior: 'smooth', block: 'end' });
-  await waitOrTap(3200);
+  await wait(3200);
 }
 
 async function epilogue() {
@@ -102,9 +102,9 @@ async function ending() {
       const p = h('p');
       block.append(p);
       await typeText(p, l, { cps: 12 });
-      await waitOrTap(700);
+      await wait(700);
     }
-    await waitOrTap(gap + 1400);
+    await wait(gap + 1400);
   };
   await say(['어떤 답장을 골랐어도', '엄마의 메모는 결국 같은 말이었어요.'], 1800);
   await say(['진짜 엔딩은 게임 밖에 있어요.'], 900);

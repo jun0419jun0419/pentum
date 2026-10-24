@@ -52,7 +52,7 @@ function startScreen() {
           h('div', { class: 'st-or' }, h('span', { text: '또는 이름' })),
           input, preview, err),
         go,
-        h('p', { class: 'st-note', text: '소리 없이 진행돼요. 긴 글은 화면을 탭하면 빨리 넘어가요.' })));
+        h('p', { class: 'st-note', text: '소리 없이 진행돼요.' })));
 
     go.addEventListener('click', () => {
       const name = nameOf();
@@ -84,18 +84,6 @@ async function intro() {
 }
 
 async function run() {
-  // 버튼이 아닌 곳을 탭하면 긴 글이 빨리 넘어간다
-  phone.addEventListener('pointerdown', e => {
-    if (e.target.closest('button, input, a')) return;
-    emitTap();
-  });
-  document.addEventListener('keydown', e => {
-    if ((e.key === ' ' || e.key === 'Enter') && !e.target.closest('input, button')) {
-      e.preventDefault();
-      emitTap();
-    }
-  });
-
   await startScreen();
   createRooms();
   await intro();

@@ -135,7 +135,7 @@ class Room {
   async caption(text, { hold = true } = {}) {
     this.list.append(h('div', { class: 'caption', text: P(text) }));
     this.scroll();
-    if (hold) await waitOrTap(readMs(text) + 900);
+    if (hold) await wait(readMs(text) + 900);
   }
 
   system(text, ic = 'info-circle') {
@@ -390,7 +390,7 @@ async function lockScene({ narr = '', cards, hint = '알림을 눌러 확인하�
   await show(v, 1000);
   if (narr) {
     await typeText(narrEl, P(narr), { cps: 15 });
-    await waitOrTap(readMs(narr));
+    await wait(readMs(narr));
   }
   await wait(gapBefore);
   let resolve;
@@ -510,14 +510,14 @@ class Call {
     while (this.subs.children.length > 3) this.subs.firstElementChild.remove();
     if (who === 'them') await typeText(line, P(text), { cps: 13 });
     else line.textContent = P(text);
-    await waitOrTap(readMs(text) + (who === 'them' ? 300 : 0));
+    await wait(readMs(text) + (who === 'them' ? 300 : 0));
   }
 
   async showNote(text) {
     this.note.textContent = '';
     this.note.classList.add('on');
     await typeText(this.note, P(text), { cps: 13 });
-    await waitOrTap(readMs(text));
+    await wait(readMs(text));
   }
 
   choose(opts) {
@@ -571,7 +571,7 @@ async function titleCard({ part = '', label, title, quote }) {
       h('h2', { class: 'card-title', text: title }),
       h('p', { class: 'card-quote', text: P(quote) })));
   await show(v, 1400);
-  await waitOrTap(5400);
+  await wait(5400);
 }
 
 async function narration(lines, { theme = 'black', gap = 900, end = 2400, show: showMs = 1200 } = {}) {
@@ -588,9 +588,9 @@ async function narration(lines, { theme = 'black', gap = 900, end = 2400, show: 
     const p = h('p');
     box.append(p);
     await typeText(p, P(line), { cps: 11 });
-    await waitOrTap(gap + Array.from(line).length * 55);
+    await wait(gap + Array.from(line).length * 55);
   }
-  await waitOrTap(end);
+  await wait(end);
   return v;
 }
 
