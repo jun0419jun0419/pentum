@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#e8ecf0" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#0c0e10" media="(prefers-color-scheme: dark)">
+  <title>엄마의 임시저장함</title>
+  <meta name="description" content="몰래 아팠던 엄마의 1년치 짧은 문자 이야기. 3부와 에필로그, 약 1시간 분량의 인터랙티브 스토리.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Serif+KR:wght@400;600&display=swap">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.44.0/dist/tabler-icons.min.css">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <main id="stage">
+    <div id="phone" data-tone="light">
+      <div id="statusbar" aria-hidden="true">
+        <span id="sb-time">9:41</span>
+        <span class="sb-right">
+          <i class="ti ti-antenna-bars-5"></i>
+          <i class="ti ti-wifi"></i>
+          <span id="sb-pct"></span>
+          <i id="sb-batt" class="ti ti-battery-4"></i>
+        </span>
+      </div>
+      <div id="screen"></div>
+    </div>
+  </main>
+  <noscript>
+    <p class="noscript">이 이야기는 자바스크립트가 켜져 있어야 볼 수 있어요.</p>
+  </noscript>
+  <script src="js/util.js" defer></script>
+  <script src="js/art.js" defer></script>
+  <script src="js/ui.js" defer></script>
+  <script src="js/part1.js" defer></script>
+  <script src="js/part2.js" defer></script>
+  <script src="js/part3.js" defer></script>
+  <script src="js/epilogue.js" defer></script>
+  <script src="js/main.js" defer></script>
+</body>
+</html>
