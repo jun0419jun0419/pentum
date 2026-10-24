@@ -283,10 +283,12 @@ class Room {
   }
 
   // 3부: 엄마의 작성창
-  async compose(text, { step = 105, append = false } = {}) {
+  async compose(text, { step = 105, jitter = 70, append = false, tall = false } = {}) {
     this.inputBar.classList.add('typing');
+    this.inputBar.classList.toggle('tall', tall);
+    const field = this.inputText.parentElement;
     const prefix = append ? this.inputText.textContent : '';
-    await typeJamo(this.inputText, P(text), { step, prefix });
+    await typeJamo(this.inputText, P(text), { step, jitter, prefix, onStep: tall ? () => { field.scrollTop = field.scrollHeight; } : null });
   }
 
   async erase() {
@@ -297,7 +299,7 @@ class Room {
   sendComposed({ unread = true } = {}) {
     const t = this.inputText.textContent;
     this.inputText.textContent = '';
-    this.inputBar.classList.remove('typing');
+    this.inputBar.classList.remove('typing', 'tall');
     return this.msg({ from: 'me', text: t, unread });
   }
 

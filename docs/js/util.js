@@ -91,11 +91,12 @@ async function typeText(el, text, { cps = 12, jitter = 0.35 } = {}) {
 }
 
 // 엄마의 느린 손가락: 자모 단위로 천천히
-async function typeJamo(el, text, { step = 100, jitter = 70, prefix = '' } = {}) {
+async function typeJamo(el, text, { step = 100, jitter = 70, prefix = '', onStep = null } = {}) {
   let done = prefix;
   for (const ch of Array.from(text)) {
     for (const s of jamoSteps(ch)) {
       el.textContent = done + s;
+      onStep?.();
       await wait(step + Math.random() * jitter);
     }
     done += ch;
